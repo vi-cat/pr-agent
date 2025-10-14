@@ -35,6 +35,6 @@ Structure:
     return reply;
   } catch (err) {
     console.error("Agent error:", err);
-    return "❌ Error: Agent unavailable.";
+    return "Error: Agent unavailable.";
   }
 }

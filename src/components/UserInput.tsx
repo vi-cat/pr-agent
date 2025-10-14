@@ -1,6 +1,13 @@
 import "./styles.css";
+import { useState } from "react";
 
-export default function UserInput() {
+interface UserInputProps {
+  handleUserSubmit: (input: string) => void;
+}
+
+export default function UserInput({ handleUserSubmit }: UserInputProps) {
+  const [value, setValue] = useState("");
+
   return (
     <>
       <h2 className="subtitle is-5">Your Input</h2>
@@ -9,8 +16,12 @@ export default function UserInput() {
         id="userInput"
         className="textarea"
         placeholder="Paste ticket description, diff, and notes..."
+        onChange={(e) => setValue(e.target.value)}
       ></textarea>
-      <button className="button islink is-fullwidth mt-3">
+      <button
+        className="button is-link is-fullwidth mt-3"
+        onClick={() => handleUserSubmit(value)}
+      >
         Generate PR Description
       </button>
     </>
