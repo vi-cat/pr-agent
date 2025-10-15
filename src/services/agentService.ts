@@ -1,4 +1,5 @@
 import { invokeTool } from "./mcpClient";
+import { getUserPrompt, getSystemPrompt } from "../constants/prompts";
 
 export function sanitizeInput(input: string): string {
   if (!input.trim()) return "";
@@ -13,28 +14,13 @@ export function sanitizeInput(input: string): string {
     .trim(); // final cleanup
 }
 
-export async function sendToAgent(userText: string): Promise<string> {
-  const clean = sanitizeInput(userText);
-  if (!clean) {
-    throw new Error("Empty input. Please provide details.");
-  }
-
-  const systemPrompt = `
-You are a senior frontend engineer writing clear, concise, and professional Pull Request descriptions in Markdown.
-Structure:
-## Summary
-## Changes
-## Risks & Rollback
-## Checklist
-`.trim();
-
-  const fullPrompt = `${systemPrompt}\n\nUser Input:\n${clean}`;
-
-  try {
-    const reply = await invokeTool("generate_pr", { text: fullPrompt });
-    return reply;
-  } catch (err) {
-    console.error("Agent error:", err);
-    return "Error: Agent unavailable.";
-  }
+export async function sendToAgent(
+  prDescription: string,
+  gitDiff: string,
+  notes: string
+): Promise<string> {
+  const userPrompt = getUserPrompt(prDescription, gitDiff, notes);
+  const systemPrompt = getSystemPrompt();
+  const reply = await invokeTool("generate_pr", systemPrompt, userPrompt);
+  return reply;
 }
